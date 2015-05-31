@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TFG-Sistema de monitoreo en tiempo real</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+    </head>
+    <style>
+        body{
+            padding-top: 40px;
+            text-align: center;
+            background: #eee;
+            color: #000;
+        }
+        .iniciar{
+            margin: 0 auto;
+            max-width: 500px;
+        }
+    </style>
+    <body onload="getProductos()">
+        <h1>TFG - Sistema de monitoreo en tiempo real</h1>
+        <div class="iniciar">
+            <div class="form-group">
+                   <select id="selectProductos" class="form-control">
+                
+                    </select>
+                
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" id="bIniciar" onclick="iniciar()">Iniciar Producción</button>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" id="bIniciar" onclick="finalizar()">Finalizar Producción</button>
+            </div>
+            
+            
+            <h1>Cantidad</h1>
+            <h1 id="hCantidad">0</h1>
+        </div>
+    </body>
+   
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    var wsUri ="ws://"+document.location.host+document.location.pathname+"endpoint";
+    console.log(wsUri);
+    var ws = new WebSocket(wsUri);
+    ws.onerror=function(evt){
+        console.log("error");
+    };
+    ws.onmessage=function(evt){
+      console.log(evt.data);
+      $("#hCantidad").html(evt.data);
+    };
+    function iniciar(){
+        $.get("http://"+document.location.host+document.location.pathname+"iniciar?producto="+$("#selectProductos").val(),function(data){
+            $("#bIniciar").html("Sesion Iniciada");
+            $("#bIniciar").prop("disable",true);
+            $("#bIniciar").removeClass("btn-primary");
+            $("#bIniciar").addClass("btn-success");
+        });
+    }
+    function getProductos(){
+        $.get("http://"+document.location.host+document.location.pathname+"productos",function(data){
+           console.log(data); 
+           $.each(data,function(key,val){
+               $("#selectProductos").append('<option value="'+val.idProducto+'">'+val.descripcion+"</option>");
+           });
+           
+        });
+    }
+    function finalizar(){
+        $.get("http://"+document.location.host+document.location.pathname+"finalizar",function(data){
+            
+        });
+    }
+    
+    
+        
+ </script>
